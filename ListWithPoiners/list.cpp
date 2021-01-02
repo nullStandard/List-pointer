@@ -96,10 +96,10 @@ void StringListRemove(char*** list, char* str)
 // working properly (probably)
 int StringListSize(char** list)
 {
-	int length = 0;
 
 	if (list) // only if list is initialized
 	{
+		int length = 0;
 
 		auto iter = list;
 		while (true)
@@ -109,8 +109,10 @@ int StringListSize(char** list)
 				break;
 			iter = reinterpret_cast<char**>(iter[0]);
 		}
+		return length;
 	}
-	return length;
+	else
+		return -1;
 }
 
 // working properly (probably)
@@ -181,7 +183,7 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 		auto iter_of_first = list;
 		for (int i = 0; i < index_of_first; ++i)
 			iter_of_first = reinterpret_cast<char**>(iter_of_first[0]);
-		
+
 		auto iter_of_second = list;
 		for (int i = 0; i < index_of_second; ++i)
 			iter_of_second = reinterpret_cast<char**>(iter_of_second[0]);
@@ -197,14 +199,16 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 void StringListSort(char** list)
 {
 	int size = StringListSize(list);
-	 
-	for (int i = 0; i < size - 1; i++) 
+
+	for (int i = 0; i < size - 1; i++)
 	{
 		auto iter = list;
 		for (int j = 0; j < size - i - 1; j++)
 		{
 			auto iter_next = reinterpret_cast<char**>(iter[0]);
-			if (strcmp (iter[1], iter_next[1]) > 0)
+
+
+			if (strcmp(iter[1], iter_next[1]) > 0)
 			{
 				char* temp = iter[1];
 				iter[1] = iter_next[1];
