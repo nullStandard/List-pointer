@@ -170,7 +170,7 @@ void StringListRemoveDuplicates(char*** list)
 	}
 }
 
-// is empty yet
+// working properly (probably)
 void StringListReplaceInStrings(char** list, char* before, char* after)
 {
 	int index_of_first = StringListIndexOf(list, before);
