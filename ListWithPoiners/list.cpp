@@ -200,15 +200,45 @@ void StringListSort(char** list)
 {
 	int size = StringListSize(list);
 
-	for (int i = 0; i < size - 1; i++)
+	// lambdas, that implement ascending/descending predicats
+	/////////////////////////////////////////////////////////
+	auto lambda_ascending
+	{
+		[](char* a, char* b)->int
+			{
+				return strcmp(a, b);
+			}
+	};
+
+	auto lambda_descending
+	{
+		[](char* a, char* b)->int
+			{
+				return -strcmp(a, b);
+			}
+	};
+	/////////////////////////////////////////////////////////
+
+	char choise;
+	cout << "Ascending or descending?(a/d): ";
+	cin >> choise;
+
+	int (*lambda_ptr)(char* a, char* b);
+
+	// ternary operator to chosing what exactly we want: ascending or descending sorting
+	(choise == 'a') ?
+		lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_ascending)	// true
+		:
+		lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_descending);	// false
+
+	for (int i = 0; i < size - 1; ++i)
 	{
 		auto iter = list;
-		for (int j = 0; j < size - i - 1; j++)
+		for (int j = 0; j < size - i - 1; ++j)
 		{
 			auto iter_next = reinterpret_cast<char**>(iter[0]);
 
-
-			if (strcmp(iter[1], iter_next[1]) > 0)
+			if (lambda_ptr(iter[1], iter_next[1]) > 0)
 			{
 				char* temp = iter[1];
 				iter[1] = iter_next[1];
