@@ -33,6 +33,8 @@ int main()
 
 	cout << StringListSize(head) << endl;
 	PrintList(head);
+	StringListReplaceInStrings(head, arr, arr1);
+	PrintList(head);
 	StringListRemoveDuplicates(&head);
 	//StringListRemove(&head, arr);
 	PrintList(head);

@@ -173,7 +173,23 @@ void StringListRemoveDuplicates(char*** list)
 // is empty yet
 void StringListReplaceInStrings(char** list, char* before, char* after)
 {
+	int index_of_first = StringListIndexOf(list, before);
+	int index_of_second = StringListIndexOf(list, after);
 
+	if ((index_of_first != -1) && (index_of_second != -1))
+	{
+		auto iter_of_first = list;
+		for (int i = 0; i < index_of_first; ++i)
+			iter_of_first = reinterpret_cast<char**>(iter_of_first[0]);
+		
+		auto iter_of_second = list;
+		for (int i = 0; i < index_of_second; ++i)
+			iter_of_second = reinterpret_cast<char**>(iter_of_second[0]);
+
+		char* buf_str = iter_of_second[1];
+		iter_of_second[1] = iter_of_first[1];
+		iter_of_first[1] = buf_str;
+	}
 }
 
 // is empty yet
