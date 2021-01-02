@@ -1,34 +1,9 @@
 #include "list.h"
 
-// для того, щоб очистити пам'ять, можна не юзати "додаткову зірочку"
-// тобто додаткова зірка потрібна лише для того, щоб заалочити пам'ять, або внести зміни?
-//void funcB(char* string)
-//{
-//	/*string = (char*)malloc(1024);
-//	//strncpy(string, "Hi, my name is...", 1024);
-//
-//	char* temp = (char*)malloc(10);
-//	string = temp;*/
-//
-//	free(string);
-//	string = nullptr;
-//}
-//
-//void funcA(void) 
-//{
-//	char* str = (char*)malloc(20);
-//	strncpy(str, "Hi, my name is...", 20);
-//
-//	funcB(str);
-//
-//	free(str); // undifined behavior 
-//}
-
 
 int main()
 {
-	//funcA();
-
+	// just debuging
 	char arr[] = "Hello!";
 	char arr1[] = "Hey!";
 	char arr2[] = "Hayhai!";

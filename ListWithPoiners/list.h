@@ -8,8 +8,6 @@
 
 using namespace std;
 
-
-
 /* Initializes list */
 void StringListInit(char*** list);
 
