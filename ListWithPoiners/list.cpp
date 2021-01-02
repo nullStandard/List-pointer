@@ -192,10 +192,27 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 	}
 }
 
-// is empty yet
+// Custom bubble-sorting
+// working properly (probably)
 void StringListSort(char** list)
 {
-
+	int size = StringListSize(list);
+	 
+	for (int i = 0; i < size - 1; i++) 
+	{
+		auto iter = list;
+		for (int j = 0; j < size - i - 1; j++)
+		{
+			auto iter_next = reinterpret_cast<char**>(iter[0]);
+			if (strcmp (iter[1], iter_next[1]) > 0)
+			{
+				char* temp = iter[1];
+				iter[1] = iter_next[1];
+				iter_next[1] = temp;
+			}
+			iter = reinterpret_cast<char**>(iter[0]);
+		}
+	}
 }
 
 //working properly (probably)
