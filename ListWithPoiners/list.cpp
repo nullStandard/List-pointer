@@ -175,22 +175,25 @@ void StringListRemoveDuplicates(char*** list)
 // working properly (probably)
 void StringListReplaceInStrings(char** list, char* before, char* after)
 {
-	int index_of_first = StringListIndexOf(list, before);
-	int index_of_second = StringListIndexOf(list, after);
-
-	if ((index_of_first != -1) && (index_of_second != -1))
+	if (list)
 	{
-		auto iter_of_first = list;
-		for (int i = 0; i < index_of_first; ++i)
-			iter_of_first = reinterpret_cast<char**>(iter_of_first[0]);
+		int index_of_first = StringListIndexOf(list, before);
+		int index_of_second = StringListIndexOf(list, after);
 
-		auto iter_of_second = list;
-		for (int i = 0; i < index_of_second; ++i)
-			iter_of_second = reinterpret_cast<char**>(iter_of_second[0]);
+		if ((index_of_first != -1) && (index_of_second != -1))
+		{
+			auto iter_of_first = list;
+			for (int i = 0; i < index_of_first; ++i)
+				iter_of_first = reinterpret_cast<char**>(iter_of_first[0]);
 
-		char* buf_str = iter_of_second[1];
-		iter_of_second[1] = iter_of_first[1];
-		iter_of_first[1] = buf_str;
+			auto iter_of_second = list;
+			for (int i = 0; i < index_of_second; ++i)
+				iter_of_second = reinterpret_cast<char**>(iter_of_second[0]);
+
+			char* buf_str = iter_of_second[1];
+			iter_of_second[1] = iter_of_first[1];
+			iter_of_first[1] = buf_str;
+		}
 	}
 }
 
@@ -198,53 +201,56 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 // working properly (probably)
 void StringListSort(char** list)
 {
-	int size = StringListSize(list);
-
-	// lambdas, that implement ascending/descending predicats
-	/////////////////////////////////////////////////////////
-	auto lambda_ascending
+	if (list)
 	{
-		[](char* a, char* b)->int
-			{
-				return strcmp(a, b);
-			}
-	};
+		int size = StringListSize(list);
 
-	auto lambda_descending
-	{
-		[](char* a, char* b)->int
-			{
-				return -strcmp(a, b);
-			}
-	};
-	/////////////////////////////////////////////////////////
-
-	char choise;
-	cout << "Ascending or descending?(a/d): ";
-	cin >> choise;
-
-	int (*lambda_ptr)(char* a, char* b);
-
-	// ternary operator to chosing what exactly we want: ascending or descending sorting
-	(choise == 'a') ?
-		lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_ascending)	// true
-		:
-		lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_descending);	// false
-
-	for (int i = 0; i < size - 1; ++i)
-	{
-		auto iter = list;
-		for (int j = 0; j < size - i - 1; ++j)
+		// lambdas, that implement ascending/descending predicats
+		/////////////////////////////////////////////////////////
+		auto lambda_ascending
 		{
-			auto iter_next = reinterpret_cast<char**>(iter[0]);
+			[](char* a, char* b)->int
+				{
+					return strcmp(a, b);
+				}
+		};
 
-			if (lambda_ptr(iter[1], iter_next[1]) > 0)
+		auto lambda_descending
+		{
+			[](char* a, char* b)->int
+				{
+					return -strcmp(a, b);
+				}
+		};
+		/////////////////////////////////////////////////////////
+
+		char choise;
+		cout << "Ascending or descending?(a/d): ";
+		cin >> choise;
+
+		int (*lambda_ptr)(char* a, char* b);
+
+		// ternary operator to chosing what exactly we want: ascending or descending sorting
+		(choise == 'a') ?
+			lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_ascending)	// true
+			:
+			lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_descending);	// false
+
+		for (int i = 0; i < size - 1; ++i)
+		{
+			auto iter = list;
+			for (int j = 0; j < size - i - 1; ++j)
 			{
-				char* temp = iter[1];
-				iter[1] = iter_next[1];
-				iter_next[1] = temp;
+				auto iter_next = reinterpret_cast<char**>(iter[0]);
+
+				if (lambda_ptr(iter[1], iter_next[1]) > 0)
+				{
+					char* temp = iter[1];
+					iter[1] = iter_next[1];
+					iter_next[1] = temp;
+				}
+				iter = reinterpret_cast<char**>(iter[0]);
 			}
-			iter = reinterpret_cast<char**>(iter[0]);
 		}
 	}
 }
