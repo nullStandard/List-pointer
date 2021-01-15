@@ -199,11 +199,10 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 
 // Custom bubble-sorting
 // working properly (probably)
-void StringListSort(char** list)
+void StringListSort(char** list, bool ascending)
 {
 	if (list)
 	{
-		int size = StringListSize(list);
 
 		// lambdas, that implement ascending/descending predicats
 		/////////////////////////////////////////////////////////
@@ -224,18 +223,15 @@ void StringListSort(char** list)
 		};
 		/////////////////////////////////////////////////////////
 
-		char choise;
-		cout << "Ascending or descending?(a/d): ";
-		cin >> choise;
-
 		int (*lambda_ptr)(char* a, char* b);
 
 		// ternary operator to chosing what exactly we want: ascending or descending sorting
-		(choise == 'a') ?
+		(ascending) ?
 			lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_ascending)	// true
 			:
 			lambda_ptr = static_cast<int(*)(char* a, char* b)>(lambda_descending);	// false
 
+		int size = StringListSize(list);
 		for (int i = 0; i < size - 1; ++i)
 		{
 			auto iter = list;

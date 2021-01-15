@@ -33,7 +33,7 @@ void StringListRemoveDuplicates(char*** list);
 void StringListReplaceInStrings(char** list, char* before, char* after);
 
 /* Sorts the list of strings in ascending order */
-void StringListSort(char** list);
+void StringListSort(char** list, bool ascending = true);
 
 void PrintList(char** list);
 //#endif
