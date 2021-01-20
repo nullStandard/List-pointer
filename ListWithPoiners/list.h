@@ -8,6 +8,14 @@
 
 using namespace std;
 
+struct Interaction
+{
+	void showCommands();
+	void input();
+private:
+	char** head = nullptr;
+};
+
 /* Initializes list */
 void StringListInit(char*** list);
 
@@ -17,7 +25,7 @@ void StringListDestroy(char*** list);
 /* Inserts value at the end of the list. */
 void StringListAdd(char** list, char* str);
 
-/* Removes all occurrences of str in the list. */
+/* Removes first occurrences of str in the list. */
 void StringListRemove(char*** list, char* str);
 
 /* Returns the number of items in the list. */
@@ -36,4 +44,5 @@ void StringListReplaceInStrings(char** list, char* before, char* after);
 void StringListSort(char** list, bool ascending = true);
 
 void PrintList(char** list);
+
 //#endif

@@ -19,7 +19,7 @@ void StringListDestroy(char*** list)
 		auto mem_list = *(list)[0];
 		auto temp = reinterpret_cast<char**>(*(list)[0]);
 		free(*list);
-		*list = nullptr; //три крапки тільки через цей рядочок
+		*list = nullptr;
 
 		if (!mem_list)
 		{
@@ -125,7 +125,7 @@ int StringListIndexOf(char** list, char* str)
 		auto iter = list;
 		while (true)
 		{
-			if (iter[1] == str)
+			if (!strcmp(iter[1], str))
 			{
 				return index;
 			}
@@ -154,7 +154,7 @@ void StringListRemoveDuplicates(char*** list)
 
 			while (true)
 			{
-				if (temp[1] == iter[1])
+				if (!strcmp(temp[1], iter[1]))
 				{
 					auto temp2 = reinterpret_cast<char**>(iter[0]);
 					StringListRemove(list, iter[1]);
@@ -203,7 +203,6 @@ void StringListSort(char** list, bool ascending)
 {
 	if (list)
 	{
-
 		// lambdas, that implement ascending/descending predicats
 		/////////////////////////////////////////////////////////
 		auto lambda_ascending
@@ -270,5 +269,109 @@ void PrintList(char** list)
 	else
 	{
 		cout << "List is already empty" << endl;
+	}
+}
+
+void Interaction::showCommands()
+{
+	printf("%s\n", "Command signatures: ");
+	printf("%s\n", "i \tinit the list;");
+	printf("%s\n", "a \tadd a new string to the list;");
+	printf("%s\n", "d \tdestroy the list;");
+	printf("%s\n", "ro \tremove all occurrences of string in the list");
+	printf("%s\n", "s \tget the number of items in the list");
+	printf("%s\n", "ind \tget the index position of the first occurrence of string in the list");
+	printf("%s\n", "rd \tremove duplicate entries from the list");
+	printf("%s\n", "rp \treplace every occurrence of the before, in each of the string lists's strings, with after");
+	printf("%s\n", "srt \tsort the list of strings in chosen order (ascending by default)");
+	printf("%s\n", "p \tprint the list");
+	printf("%s\n", "q \tquit");
+	printf("%s\n\n", "c \tshow command signatures again");
+	printf("%s\n\n", "First of all, you have to initialize the list");
+}
+
+void Interaction::input()
+{
+	while (true)
+	{
+		char command[4];
+		printf("%s", "Enter command code: ");
+		scanf("%s", command);
+
+		if (!strcmp(command, "i"))
+		{
+			StringListInit(&head);
+		}
+		else if (!strcmp(command, "a"))
+		{
+			char* arr = (char*)malloc(20 * sizeof(char));
+			scanf("%s", arr);
+			StringListAdd(head, arr);
+			PrintList(head);
+		}
+		else if (!strcmp(command, "d"))
+		{
+			StringListDestroy(&head);
+		}
+		else if (!strcmp(command, "ro"))
+		{
+			char* arr = (char*)malloc(20 * sizeof(char));
+			scanf("%s", arr);
+			StringListRemove(&head, arr);
+			PrintList(head);
+		}
+		else if (!strcmp(command, "s"))
+		{
+			std::cout << "List size: " << StringListSize(head) << std::endl;
+		}
+		else if (!strcmp(command, "ind"))
+		{
+			char* arr = (char*)malloc(20 * sizeof(char));
+			scanf("%s", arr);
+			std::cout << "Index of  \"" << arr << "\" is " << StringListIndexOf(head, arr) << std::endl;
+		}
+		else if (!strcmp(command, "rd"))
+		{
+			StringListRemoveDuplicates(&head);
+			PrintList(head);
+		}
+		else if (!strcmp(command, "rp"))
+		{
+			char* before = (char*)malloc(20 * sizeof(char));
+			scanf("%s", before);
+			char* after = (char*)malloc(20 * sizeof(char));
+			scanf("%s", after);
+			StringListReplaceInStrings(head, before, after);
+			PrintList(head);
+		}
+		else if (!strcmp(command, "srt"))
+		{
+			char choose;
+			printf("%s", "acsending by default, choose descending? (y/n): ");
+			std::cin >> choose;
+			(choose == 'y') ? StringListSort(head, false) : StringListSort(head);
+			PrintList(head);
+		}
+		else if (!strcmp(command, "p"))
+		{
+			PrintList(head);
+		}
+		else if (!strcmp(command, "q"))
+		{
+			return;
+		}
+		else if (!strcmp(command, "q"))
+		{
+			return;
+		}
+		else if (!strcmp(command, "c"))
+		{
+			printf("\n");
+			showCommands();
+		}
+		else
+		{
+			printf("%s\n", "Command doesn't exist, try again.");
+		}
 	}
 }
