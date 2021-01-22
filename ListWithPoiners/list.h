@@ -8,6 +8,7 @@
 
 using namespace std;
 
+// class, that allows user to interact with list through UI
 struct Interaction
 {
 	void showCommands();

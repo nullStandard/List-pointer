@@ -1,30 +1,38 @@
 #include "list.h"
 
+#define NEXT_NODE 0
+#define STR_VALUE 1
+
 //working properly (probably)
 void StringListInit(char*** list)
 {
 	if (!(*list))
 	{
 		*list = static_cast<char**>(calloc(2, sizeof(char*)));
-		(*list)[0] = nullptr;
-		(*list)[1] = nullptr;
+		if ((*list))
+		{
+			(*list)[NEXT_NODE] = nullptr;
+			(*list)[STR_VALUE] = nullptr;
+		}
 	}
 }
 
-//working properly (probably)
 void StringListDestroy(char*** list)
 {
 	if (*list)
 	{
-		auto mem_list = *(list)[0];
-		auto temp = reinterpret_cast<char**>(*(list)[0]);
+		//remembering next node before removing
+		auto mem_list = *(list)[NEXT_NODE];
 		free(*list);
 		*list = nullptr;
 
+		//if next node doesn't excist - return
 		if (!mem_list)
 		{
 			return;
 		}
+		//else moving to next node
+		auto temp = reinterpret_cast<char**>(mem_list);
 
 		StringListDestroy(&temp);
 	}
@@ -35,23 +43,28 @@ void StringListAdd(char** list, char* str)
 {
 	if (list)
 	{
-		if (!(list[1]))
+		if (!(list[STR_VALUE]))
 		{
-			list[1] = str;
+			list[STR_VALUE] = str;
 		}
 		else
 		{
+			//iterate untill next node doesn't excist
 			auto iter = list;
-			while (iter[0])
+			while (iter[NEXT_NODE])
 			{
-				iter = reinterpret_cast<char**>(iter[0]);
+				iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 			}
 
+			//creating dynamically new node and putting it to the end of list
 			auto new_node = static_cast<char**>(malloc(2 * sizeof(char*)));
-			new_node[0] = nullptr;
-			new_node[1] = str;
-
-			iter[0] = reinterpret_cast<char*>(new_node);
+			if (new_node)
+			{
+				new_node[NEXT_NODE] = nullptr;
+				new_node[STR_VALUE] = str;
+			}
+			//now, next node pointer points on new dynamically created node
+			iter[NEXT_NODE] = reinterpret_cast<char*>(new_node);
 		}
 	}
 }
@@ -62,33 +75,39 @@ void StringListRemove(char*** list, char* str)
 	if (*list)
 	{
 		int index = StringListIndexOf(*list, str);
+
+		//if our str is first in list
 		if (index == 0)
 		{
 			auto to_free = *list;
-			*list = reinterpret_cast<char**>((*list)[0]);
+			//declaring next node as head of list
+			*list = reinterpret_cast<char**>((*list)[NEXT_NODE]);
 			free(to_free);
 			to_free = nullptr;
 			return;
 		}
 
+		//iteration StringListIndexOf() times to aim index(position) of str
 		auto iter = *list;
 		for (int i = 0; i < index - 1; ++i)
 		{
-			iter = reinterpret_cast<char**>(iter[0]);
+			iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 		}
 
-		auto temp = reinterpret_cast<char**>(iter[0]);
+		//remembering next node
+		auto temp = reinterpret_cast<char**>(iter[NEXT_NODE]);
 
-		// if node is last in the list
+		// if temp node is last in the list
 		if (index == (StringListSize(*list) - 1))
 		{
-			iter[0] = nullptr;
+			iter[NEXT_NODE] = nullptr;
 			free(temp);
 			return;
 		}
 
-		auto temp2 = reinterpret_cast<char**>(temp[0]);
-		iter[0] = reinterpret_cast<char*>(temp2);
+		//deleting node if it is in the middle of array
+		auto temp2 = reinterpret_cast<char**>(temp[NEXT_NODE]);
+		iter[NEXT_NODE] = reinterpret_cast<char*>(temp2);
 		free(temp);
 	}
 }
@@ -105,14 +124,16 @@ int StringListSize(char** list)
 		while (true)
 		{
 			++length;
-			if (!iter[0])
+			if (!iter[NEXT_NODE])
 				break;
-			iter = reinterpret_cast<char**>(iter[0]);
+			iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 		}
 		return length;
 	}
 	else
-		return -1;
+	{
+		return -1; // list is not initialized
+	}
 }
 
 // working properly (probably)
@@ -125,20 +146,22 @@ int StringListIndexOf(char** list, char* str)
 		auto iter = list;
 		while (true)
 		{
-			if (!strcmp(iter[1], str))
+			if (!strcmp(iter[STR_VALUE], str))
 			{
 				return index;
 			}
-			if (!iter[0])
+			if (!iter[NEXT_NODE])
+			{
 				break;
-			iter = reinterpret_cast<char**>(iter[0]);
+			}
+			iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 			++index;
 		}
-		return -1;
+		return -1; // there is no str in the list
 	}
 }
 
-// working properly (probably)
+// almost like a bubble sort
 void StringListRemoveDuplicates(char*** list)
 {
 	if (*list)
@@ -146,28 +169,36 @@ void StringListRemoveDuplicates(char*** list)
 		auto iter = *list;
 		while (true)
 		{
-			bool already_iterated = false;
-			if (!iter[0])
+			//checking if we finished comparisons for current node with all others remaining nodes in list
+			bool already_iterated = false; 
+			if (!iter[NEXT_NODE])
+			{
 				break;
-
-			auto temp = reinterpret_cast<char**>(iter[0]);
+			}
+			auto temp = reinterpret_cast<char**>(iter[NEXT_NODE]);
 
 			while (true)
 			{
-				if (!strcmp(temp[1], iter[1]))
+				if (!strcmp(temp[STR_VALUE], iter[STR_VALUE]))
 				{
-					auto temp2 = reinterpret_cast<char**>(iter[0]);
-					StringListRemove(list, iter[1]);
+					auto temp2 = reinterpret_cast<char**>(iter[NEXT_NODE]);
+					StringListRemove(list, iter[STR_VALUE]);
 					iter = temp2;
+
+					//if we updated head there is no reason to continue iterations...
 					already_iterated = true;
 					break;
 				}
-				if (!temp[0])
+				if (!temp[NEXT_NODE])
+				{
 					break;
-				temp = reinterpret_cast<char**>(temp[0]);
+				}
+				temp = reinterpret_cast<char**>(temp[NEXT_NODE]);
 			}
-			if (!already_iterated)
-				iter = reinterpret_cast<char**>(iter[0]);
+			if (!already_iterated) //we do not moving to next node untill consider all remaining nodes
+			{
+				iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
+			}
 		}
 	}
 }
@@ -184,15 +215,18 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 		{
 			auto iter_of_first = list;
 			for (int i = 0; i < index_of_first; ++i)
-				iter_of_first = reinterpret_cast<char**>(iter_of_first[0]);
-
+			{
+				iter_of_first = reinterpret_cast<char**>(iter_of_first[NEXT_NODE]);
+			}
 			auto iter_of_second = list;
 			for (int i = 0; i < index_of_second; ++i)
-				iter_of_second = reinterpret_cast<char**>(iter_of_second[0]);
-
-			char* buf_str = iter_of_second[1];
-			iter_of_second[1] = iter_of_first[1];
-			iter_of_first[1] = buf_str;
+			{
+				iter_of_second = reinterpret_cast<char**>(iter_of_second[NEXT_NODE]);
+			}
+			//swaping
+			char* buf_str = iter_of_second[STR_VALUE];
+			iter_of_second[STR_VALUE] = iter_of_first[STR_VALUE];
+			iter_of_first[STR_VALUE] = buf_str;
 		}
 	}
 }
@@ -203,7 +237,7 @@ void StringListSort(char** list, bool ascending)
 {
 	if (list)
 	{
-		// lambdas, that implement ascending/descending predicats
+		// lambdas, that implement ascending/descending
 		/////////////////////////////////////////////////////////
 		auto lambda_ascending
 		{
@@ -236,15 +270,15 @@ void StringListSort(char** list, bool ascending)
 			auto iter = list;
 			for (int j = 0; j < size - i - 1; ++j)
 			{
-				auto iter_next = reinterpret_cast<char**>(iter[0]);
+				auto iter_next = reinterpret_cast<char**>(iter[NEXT_NODE]);
 
-				if (lambda_ptr(iter[1], iter_next[1]) > 0)
+				if (lambda_ptr(iter[STR_VALUE], iter_next[STR_VALUE]) > 0)
 				{
-					char* temp = iter[1];
-					iter[1] = iter_next[1];
-					iter_next[1] = temp;
+					char* temp = iter[STR_VALUE];
+					iter[STR_VALUE] = iter_next[STR_VALUE];
+					iter_next[STR_VALUE] = temp;
 				}
-				iter = reinterpret_cast<char**>(iter[0]);
+				iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 			}
 		}
 	}
@@ -258,17 +292,17 @@ void PrintList(char** list)
 		auto iter = list;
 		while (true)
 		{
-			cout << iter[1] << " ";
-			if (!iter[0])
+			cout << iter[STR_VALUE] << " ";
+			if (!iter[NEXT_NODE])
 				break;
 
-			iter = reinterpret_cast<char**>(iter[0]);
+			iter = reinterpret_cast<char**>(iter[NEXT_NODE]);
 		}
 		cout << endl;
 	}
 	else
 	{
-		cout << "List is already empty" << endl;
+		cerr << "List is already empty\n";
 	}
 }
 
