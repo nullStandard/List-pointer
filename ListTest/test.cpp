@@ -1,7 +1,8 @@
 ﻿#include "pch.h"
 #include "C:\Users\User\source\repos\ListWithPoiners\ListWithPoiners\list.cpp"
 
-TEST(ListTesting, size) {
+TEST(ListTesting, size) 
+{
     char** head = nullptr;
     StringListInit(&head);
 

@@ -3,13 +3,12 @@
 #define NEXT_NODE 0
 #define STR_VALUE 1
 
-//working properly (probably)
 void StringListInit(char*** list)
 {
 	if (!(*list))
 	{
 		*list = static_cast<char**>(calloc(2, sizeof(char*)));
-		if ((*list))
+		if (*list)
 		{
 			(*list)[NEXT_NODE] = nullptr;
 			(*list)[STR_VALUE] = nullptr;
@@ -38,7 +37,6 @@ void StringListDestroy(char*** list)
 	}
 }
 
-// working properly (probably)
 void StringListAdd(char** list, char* str)
 {
 	if (list)
@@ -69,7 +67,6 @@ void StringListAdd(char** list, char* str)
 	}
 }
 
-// working properly (probably)
 void StringListRemove(char*** list, char* str)
 {
 	if (*list)
@@ -112,7 +109,6 @@ void StringListRemove(char*** list, char* str)
 	}
 }
 
-// working properly (probably)
 int StringListSize(char** list)
 {
 
@@ -136,7 +132,6 @@ int StringListSize(char** list)
 	}
 }
 
-// working properly (probably)
 int StringListIndexOf(char** list, char* str)
 {
 	if (list)
@@ -203,7 +198,6 @@ void StringListRemoveDuplicates(char*** list)
 	}
 }
 
-// working properly (probably)
 void StringListReplaceInStrings(char** list, char* before, char* after)
 {
 	if (list)
@@ -232,7 +226,6 @@ void StringListReplaceInStrings(char** list, char* before, char* after)
 }
 
 // Custom bubble-sorting
-// working properly (probably)
 void StringListSort(char** list, bool ascending)
 {
 	if (list)
@@ -284,7 +277,6 @@ void StringListSort(char** list, bool ascending)
 	}
 }
 
-//working properly (probably)
 void PrintList(char** list)
 {
 	if (list)
@@ -308,6 +300,7 @@ void PrintList(char** list)
 
 void Interaction::showCommands()
 {
+	//printf spamming
 	printf("%s\n", "Command signatures: ");
 	printf("%s\n", "i \tinit the list;");
 	printf("%s\n", "a \tadd a new string to the list;");
@@ -328,30 +321,35 @@ void Interaction::input()
 {
 	while (true)
 	{
-		char command[4];
+		char command[5];
 		printf("%s", "Enter command code: ");
-		scanf("%s", command);
+		std::cin >> command;
 
-		if (!strcmp(command, "i"))
+		if (strcmp(command, "i") == 0)
 		{
 			StringListInit(&head);
 		}
 		else if (!strcmp(command, "a"))
 		{
+			printf("%s", "Print string: ");
 			char* arr = (char*)malloc(20 * sizeof(char));
-			scanf("%s", arr);
+			std::cin >> arr;
+			printf("%s", "Your string: ");
 			StringListAdd(head, arr);
 			PrintList(head);
 		}
 		else if (!strcmp(command, "d"))
 		{
 			StringListDestroy(&head);
+			PrintList(head);
 		}
 		else if (!strcmp(command, "ro"))
 		{
+			printf("%s", "Print string: ");
 			char* arr = (char*)malloc(20 * sizeof(char));
-			scanf("%s", arr);
+			std::cin >> arr;
 			StringListRemove(&head, arr);
+			printf("%s", "Your string: ");
 			PrintList(head);
 		}
 		else if (!strcmp(command, "s"))
@@ -360,22 +358,27 @@ void Interaction::input()
 		}
 		else if (!strcmp(command, "ind"))
 		{
+			printf("%s", "Print string: ");
 			char* arr = (char*)malloc(20 * sizeof(char));
-			scanf("%s", arr);
+			std::cin >> arr;
 			std::cout << "Index of  \"" << arr << "\" is " << StringListIndexOf(head, arr) << std::endl;
 		}
 		else if (!strcmp(command, "rd"))
 		{
 			StringListRemoveDuplicates(&head);
+			printf("%s", "Your string: ");
 			PrintList(head);
 		}
 		else if (!strcmp(command, "rp"))
 		{
+			printf("%s", "Print first string: ");
 			char* before = (char*)malloc(20 * sizeof(char));
-			scanf("%s", before);
+			std::cin >> before;
+			printf("%s", "Print second string: ");
 			char* after = (char*)malloc(20 * sizeof(char));
-			scanf("%s", after);
+			std::cin >> after;
 			StringListReplaceInStrings(head, before, after);
+			printf("%s", "Your string: ");
 			PrintList(head);
 		}
 		else if (!strcmp(command, "srt"))
@@ -384,15 +387,13 @@ void Interaction::input()
 			printf("%s", "acsending by default, choose descending? (y/n): ");
 			std::cin >> choose;
 			(choose == 'y') ? StringListSort(head, false) : StringListSort(head);
+			printf("%s", "Your string: ");
 			PrintList(head);
 		}
 		else if (!strcmp(command, "p"))
 		{
+			printf("%s", "Your string: ");
 			PrintList(head);
-		}
-		else if (!strcmp(command, "q"))
-		{
-			return;
 		}
 		else if (!strcmp(command, "q"))
 		{
